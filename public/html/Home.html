@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="../css/home.css" />
+  </head>
+  <body>
+    <h1>URL Shortener</h1>
+    <form>
+      <label for="original-url">Original URL:</label>
+      <input type="text" id="original-url" required />
+      <br />
+      <label for="custom-url">Custom URL (optional):</label>
+      <input type="text" id="custom-url" />
+      <br />
+      <button type="submit">Generate Short URL</button>
+    </form>
+    <div>
+      <h2>Shortened URL:</h2>
+      <p id="short-url"></p>
+      <img id="qr-code" src="" alt="QR Code" />
+    </div>
+    <div>
+      <h2>Link Analytics:</h2>
+      <canvas id="clicks-chart"></canvas>
+    </div>
+  </body>
+</html>
