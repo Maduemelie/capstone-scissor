@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -18,11 +18,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  shortURLs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ShortURL",
+    },
+  ],
 });
 
 // Hash the password before saving the user
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     return next();
   }
 
@@ -44,6 +50,6 @@ userSchema.methods.comparePassword = async function (password) {
   }
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

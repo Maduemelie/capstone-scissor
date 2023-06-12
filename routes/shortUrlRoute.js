@@ -3,7 +3,7 @@ const router = express.Router();
 const shortUrlController = require("../controllers/shortUrlController");
 
 
-router.route("/shorts").post(shortUrlController.generateShortURL);
+router.route("/shorts").post(shortUrlController.generateShortURLAndUpdateHomepage);
 
 
 
