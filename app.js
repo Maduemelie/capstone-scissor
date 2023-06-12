@@ -2,6 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const passport = require('./config/passport')
 const authRouter = require('./routes/userRoute')
+const shortUrlRoute = require('./routes/shortUrlRoute')
 
 require("dotenv").config();
 
@@ -19,6 +20,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static("public"));
 app.use("/Users", authRouter)
+app.use("/shortUrl", shortUrlRoute)
 
 
 
