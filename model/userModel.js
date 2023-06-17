@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
       ref: "ShortURL",
     },
   ],
+  qrCodes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "QRCode",
+    },
+  ],
 });
 
 // Hash the password before saving the user

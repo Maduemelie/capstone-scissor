@@ -10,8 +10,8 @@
       <label for="longURL">Original URL:</label>
       <input type="text" id="longURL" name="longURL" required />
       <br />
-      <label for="custom-url">Custom URL (optional):</label>
-      <input type="text" id="custom-url" />
+      <label for="customURL">Custom URL (optional):</label>
+      <input type="text" id="customURL" name="customURL" />
       <br />
       <button type="submit">Generate Short URL</button>
     </form>
@@ -22,6 +22,7 @@
           <tr>
             <th>Long URL</th>
             <th>Short URL</th>
+            <th>Custom URL</th>
             <th>Visits</th>
             <th>Generate QR Code</th>
           </tr>
@@ -54,6 +55,40 @@
         </tbody>
       </table>
     </div>
-    <!-- <script src="../js/home.js"></script> -->
+    <script>
+      const shortURLTableBody = document.getElementById("shortURLTableBody");
+      shortURLTableBody.addEventListener("click", async function (event) {
+        if (event.target.classList.contains("generate-qr-button")) {
+          const shortURL = event.target
+            .closest("tr")
+            .querySelector("td:nth-child(1)").textContent;
+          console.log(shortURL);
+          const response = await fetch("/shortUrl/generateQrCode", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ text: shortURL }),
+          });
+
+          if (response.ok) {
+            const qrCodeBase64 = await response.text();
+            console.log(qrCodeBase64);
+            const qrCodeDataUrl = "data:image/png;base64," + qrCodeBase64;
+            console.log(qrCodeDataUrl)
+
+            // Create a download link for the QR code image
+            const link = document.createElement("a");
+            link.href = qrCodeDataUrl;
+            link.download = "qrcode.png";
+
+            // Trigger a click event on the download link to initiate the download
+            link.dispatchEvent(new MouseEvent("click"));
+          } else {
+            console.error("Error generating QR code:", response.status);
+          }
+        }
+      });
+    </script>
   </body>
 </html>
