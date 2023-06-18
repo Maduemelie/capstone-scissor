@@ -73,7 +73,6 @@
 
           if (response.ok) {
             const qrCodeBase64 = await response.text();
-            console.log(qrCodeBase64);
             const qrCodeDataUrl = "data:image/png;base64," + qrCodeBase64;
             console.log(qrCodeDataUrl)
 
