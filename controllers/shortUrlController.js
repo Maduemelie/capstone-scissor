@@ -4,15 +4,10 @@ const path = require("path");
 const fs = require("fs");
 const os = require("os");
 const QRCode = require('../model/qrCode')
-
-const QRCode = require("../model/qrCode");
-const redisClient = require("../config/redisClient");
 const qrcode = require("qrcode");
 
 
-const generateQRCode = (text) => {
-  console.log(text);
-  return new Promise((resolve, reject) => {
+
 const generateQRCode = (text) => {
   console.log(text);
   return new Promise((resolve, reject) => {
@@ -38,11 +33,11 @@ const generateQRCode = (text) => {
         }
 
         // Remove the temporary image file
-        // fs.unlink(filePath, (error) => {
-        //   if (error) {
-        //     console.error("Error deleting temporary QR code image:", error);
-        //   }
-        // });
+        fs.unlink(filePath, (error) => {
+          if (error) {
+            console.error("Error deleting temporary QR code image:", error);
+          }
+        });
 
         // Convert the binary data to base64 string
         const qrCodeBase64 = qrCodeData.toString("base64");
@@ -89,27 +84,13 @@ const generateQRCodeHandler = async (req, res) => {
 // Function to generate a new ShortURL document
 const generateShortURL = async (longURL, customURL) => {
   // Check if the custom URL already exists in the database
-  // if (customURL) {
-  //   const existingURL = await ShortURL.findOne({ customURL });
-  //   if (existingURL) {
-  //     throw new Error("Custom URL already exists");
-  //   }
-  // }
-  // Check if the long URL already has a short URL in cache
-  const cachedKey = `cached:${longURL}`;
-  const cachedShortURL = await redisClient.get(cachedKey);
-  if (cachedShortURL) {
-    console.log("Short URL found in cache");
-    return cachedShortURL;
+  if (customURL) {
+    const existingURL = await ShortURL.findOne({ customURL });
+    if (existingURL) {
+      throw new Error("Custom URL already exists");
+    }
   }
 
-  // Check if the long URL already has a short URL in the database
-  const existingShortURL = await ShortURL.findOne({ longURL });
-  if (existingShortURL) {
-    // Store the short URL in cache for future use
-    redisClient.set(cachedKey, existingShortURL);
-    return existingShortURL;
-  }
   // Create a new ShortURL document1`
   const newShortURL = new ShortURL({
     longURL,
@@ -118,8 +99,7 @@ const generateShortURL = async (longURL, customURL) => {
 
   // Save the document to the database
   await newShortURL.save();
-  // Set the short URL in cache
-  // redisClient.set(cachedKey, newShortURL);
+
   return newShortURL;
 };
 
