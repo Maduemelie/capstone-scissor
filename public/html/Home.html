@@ -28,30 +28,7 @@
           </tr>
         </thead>
         <tbody id="shortURLTableBody">
-          <!-- <tr>
-            <td>https://www.example.com/page1</td>
-            <td>https://shorturl.com/abc123</td>
-            <td>10</td>
-            <td>
-              <button class="generate-qr-button">Generate QR Code</button>
-            </td>
-          </tr>
-          <tr>
-            <td>https://www.example.com/page2</td>
-            <td>https://shorturl.com/def456</td>
-            <td>5</td>
-            <td>
-              <button class="generate-qr-button">Generate QR Code</button>
-            </td>
-          </tr>
-          <tr>
-            <td>https://www.example.com/page3</td>
-            <td>https://shorturl.com/ghi789</td>
-            <td>3</td>
-            <td>
-              <button class="generate-qr-button">Generate QR Code</button>
-            </td>
-          </tr> -->
+          <!-- Rows will be dynamically added here -->
         </tbody>
       </table>
     </div>
@@ -72,18 +49,31 @@
           });
 
           if (response.ok) {
-            const qrCodeBase64 = await response.text();
-            console.log(qrCodeBase64);
-            const qrCodeDataUrl = "data:image/png;base64," + qrCodeBase64;
-            console.log(qrCodeDataUrl)
+            const qrCodeDataUrl = await response.text();
+            console.log(qrCodeDataUrl);
+  
+            // Create a download button for the QR code image
+            const downloadButton = document.createElement("button");
+            downloadButton.textContent = "Download QR Code";
+            downloadButton.classList.add("download-qr-button");
 
-            // Create a download link for the QR code image
-            const link = document.createElement("a");
-            link.href = qrCodeDataUrl;
-            link.download = "qrcode.png";
+            // Add a click event listener to initiate the download
+            downloadButton.addEventListener("click", function () {
+              // Create a download link for the QR code image
+              const link = document.createElement("a");
+              link.href = qrCodeDataUrl;
+              link.download = "qrcode.png";
 
-            // Trigger a click event on the download link to initiate the download
-            link.dispatchEvent(new MouseEvent("click"));
+              // Trigger a click event on the download link to initiate the download
+              link.dispatchEvent(new MouseEvent("click"));
+            });
+
+            // Replace the "Generate QR Code" button with the download button
+            const tableRow = event.target.closest("tr");
+            const generateQRCodeCell =
+              tableRow.querySelector("td:nth-child(5)");
+            generateQRCodeCell.innerHTML = ""; // Clear the cell content
+            generateQRCodeCell.appendChild(downloadButton);
           } else {
             console.error("Error generating QR code:", response.status);
           }

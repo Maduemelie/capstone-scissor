@@ -67,7 +67,7 @@
   }
    */
 
-   /* style.css */
+/* style.css */
 
 /* style.css */
 body {
@@ -154,4 +154,16 @@ th {
   background-color: #45a049;
 }
 
-/* Add more styles as needed */
+/* CSS for download QR code button */
+.download-qr-button {
+  background-color: #008cba;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.download-qr-button:hover {
+  background-color: #007097;
+}

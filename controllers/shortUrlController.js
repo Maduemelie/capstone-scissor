@@ -3,91 +3,114 @@ const User = require("../model/userModel");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
+const QRCode = require('../model/qrCode')
 
+const QRCode = require("../model/qrCode");
+const redisClient = require("../config/redisClient");
 const qrcode = require("qrcode");
 
 
-  const generateQRCode = (text, callback) => {
-    console.log(text);
+const generateQRCode = (text) => {
+  console.log(text);
+  return new Promise((resolve, reject) => {
+const generateQRCode = (text) => {
+  console.log(text);
+  return new Promise((resolve, reject) => {
     if (!text) {
       const error = new Error("Invalid input: text is empty or null");
-      callback(error);
+      reject(error);
+      reject(error);
       return;
     }
-  
+
     // Generate QR code as an image file
     const filePath = `public/img/qrcode_${Date.now()}.png`; // File path to save the image
     qrcode.toFile(filePath, text, (error) => {
       if (error) {
-        callback(error);
+        reject(error);
         return;
       }
-  
+
       // Read the image file as binary data
       fs.readFile(filePath, (error, qrCodeData) => {
-        
         if (error) {
-          callback(error);
+          reject(error);
           return;
         }
-  
+
         // Remove the temporary image file
         // fs.unlink(filePath, (error) => {
         //   if (error) {
         //     console.error("Error deleting temporary QR code image:", error);
         //   }
         // });
-  
+
         // Convert the binary data to base64 string
         const qrCodeBase64 = qrCodeData.toString("base64");
         const qrCodeDataUrl = "data:image/png;base64," + qrCodeBase64;
-  
-        callback(null, qrCodeDataUrl);
+
+        resolve(qrCodeDataUrl);
       });
     });
-  // console.log(text);
-  // if (!text) {
-  //   const error = new Error("Invalid input: text is empty or null");
-  //   callback(error);
-  //   return;
-  // }
-
-  // qrcode.toDataURL(text, (error, qrCodeDataUrl) => {
-  //   if (error) {
-  //     callback(error);
-  //     return;
-  //   }
-
-  //   callback(null, qrCodeDataUrl);
-  // });
+  });
 };
 
-// HTTP request handler
-const generateQRCodeHandler = (req, res) => {
+const generateQRCodeHandler = async (req, res) => {
   const text = req.body.text; // Access the input text from the request body or query parameters
 
-  generateQRCode(text, (error, qrCodeDataUrl) => {
-    if (error) {
-      console.error("Error generating QR code:", error);
-      res.sendStatus(500); // Send an appropriate error response
-      return;
-    }
+  try {
+    const qrCodeDataUrl = await generateQRCode(text);
 
     // QR code generated successfully
     console.log("QR code generated:", qrCodeDataUrl);
-    res.send(qrCodeDataUrl); // Send the QR code data URL as the response
-  });
+
+    // Associate the QR code with the user who generated it
+    const userId = req.user._id; 
+    const qrCode = new QRCode({
+      user: userId,
+      data: qrCodeDataUrl,
+    });
+
+    const savedQRCode = await qrCode.save();
+
+    // Update the user's QR codes array with the new QR code
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { qrCodes: savedQRCode._id } },
+      { new: true }
+    );
+
+    res.send(qrCodeDataUrl); // Send the updated user object as the response
+  } catch (error) {
+    console.error("Error generating or saving QR code:", error);
+    res.sendStatus(500); // Send an appropriate error response
+  }
 };
+
 // Function to generate a new ShortURL document
 const generateShortURL = async (longURL, customURL) => {
   // Check if the custom URL already exists in the database
-  if (customURL) {
-    const existingURL = await ShortURL.findOne({ customURL });
-    if (existingURL) {
-      throw new Error("Custom URL already exists");
-    }
+  // if (customURL) {
+  //   const existingURL = await ShortURL.findOne({ customURL });
+  //   if (existingURL) {
+  //     throw new Error("Custom URL already exists");
+  //   }
+  // }
+  // Check if the long URL already has a short URL in cache
+  const cachedKey = `cached:${longURL}`;
+  const cachedShortURL = await redisClient.get(cachedKey);
+  if (cachedShortURL) {
+    console.log("Short URL found in cache");
+    return cachedShortURL;
   }
 
+  // Check if the long URL already has a short URL in the database
+  const existingShortURL = await ShortURL.findOne({ longURL });
+  if (existingShortURL) {
+    // Store the short URL in cache for future use
+    redisClient.set(cachedKey, existingShortURL);
+    return existingShortURL;
+  }
   // Create a new ShortURL document1`
   const newShortURL = new ShortURL({
     longURL,
@@ -96,7 +119,8 @@ const generateShortURL = async (longURL, customURL) => {
 
   // Save the document to the database
   await newShortURL.save();
-
+  // Set the short URL in cache
+  // redisClient.set(cachedKey, newShortURL);
   return newShortURL;
 };
 
