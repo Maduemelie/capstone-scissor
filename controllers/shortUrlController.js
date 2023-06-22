@@ -19,7 +19,6 @@ const generateQRCode = (text) => {
     if (!text) {
       const error = new Error("Invalid input: text is empty or null");
       reject(error);
-      reject(error);
       return;
     }
 
