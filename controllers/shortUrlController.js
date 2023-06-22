@@ -81,17 +81,28 @@ const generateQRCodeHandler = async (req, res) => {
   }
 };
 
+
+//shortUrl function
+//
+//
+//
+//
 // Function to generate a new ShortURL document
 const generateShortURL = async (longURL, customURL) => {
-  // Check if the custom URL already exists in the database
-  if (customURL) {
-    const existingURL = await ShortURL.findOne({ customURL });
-    if (existingURL) {
+  // Check if the custom URL or long URL already exists in the database
+  const existingURL = await ShortURL.findOne({
+    $or: [{ customURL }, { longURL }],
+  });
+
+  if (existingURL) {
+    if (existingURL.customURL === customURL) {
       throw new Error("Custom URL already exists");
+    } else if (existingURL.longURL === longURL) {
+      throw new Error("Short URL already generated for this long URL");
     }
   }
 
-  // Create a new ShortURL document1`
+  // Create a new ShortURL document
   const newShortURL = new ShortURL({
     longURL,
     customURL: customURL || undefined,
@@ -102,6 +113,7 @@ const generateShortURL = async (longURL, customURL) => {
 
   return newShortURL;
 };
+
 
 // Function to associate a ShortURL with a user
 const associateShortURLWithUser = async (userId, shortURL) => {
@@ -229,5 +241,32 @@ const generateShortURLAndUpdateHomepage = async (req, res) => {
     });
   }
 };
+//
+//
+//
+// const getUserShortURLs = async (req, res) => {
+//   try {
+//     // Get the user ID from the request object 
+//     const userId = req.user.id; 
 
-module.exports = { generateShortURLAndUpdateHomepage, generateQRCodeHandler };
+//     // Find the user in the database based on the user ID and populate the `shortURLs` field
+//     const user = await User.findById(userId).populate("shortURLs");
+
+//     // Check if the user exists
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     // Extract the short URLs from the user object
+//     const shortURLs = user.shortURLs;
+
+//     // Send the short URLs as a response
+//     res.status(200).json({ shortURLs });
+//   } catch (error) {
+//     // Handle any errors that occur during the process
+//     console.error("Error retrieving user's short URLs:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
+module.exports = { generateShortURLAndUpdateHomepage, generateQRCodeHandler};
