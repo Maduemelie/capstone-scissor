@@ -13,9 +13,30 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+//import rate limiter
+const rateLimit = require("express-rate-limit");
+const errorcontroller = require("./controllers/errorcontroller");
+const AppError = require('./utils/AppError')
 
-
-
+// Apply rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 60, // Max 10 requests per windowMs
+  message: "Too many requests, please try again later.",
+  statusCode: 429,
+  headers: {
+    // Custom headers
+    "Retry-After": 600, // Retry after 10 minutes
+    "X-RateLimit-Limit": 60,
+    "X-RateLimit-Remaining": 0,
+    "X-RateLimit-Reset": Date.now() + 10 * 60 * 1000,
+  },
+  keyGenerator: (req) => {
+    // Custom key generator
+    return req.ip; // Use client IP address as the key
+  } 
+});
+app.use(limiter)
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
@@ -30,9 +51,10 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/html/Login.html");
 });
 
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).json({message: err.message})
+app.all('*', (req, res, next) => {
+  next(new AppError(` can't find ${req.originalUrl} on this server`, 404));
 });
+
+app.use(errorcontroller)
 
 module.exports = app;
