@@ -42,14 +42,14 @@ const userLogin = (req, res, next) => {
       
       if (!user) {
           const filePath = path.join(__dirname, "..", "public", "html", "Login.html");
-          console.log("second")
+          // console.log("second")
         return res.sendFile(filePath);
       }
       
       req.login(user, (err) => {
         if (err) {
             const filePath = path.join(__dirname, "..", "public", "html", "Login.html");
-            console.log("third")
+            // console.log("third")
           return res.sendFile(filePath);
         }
         

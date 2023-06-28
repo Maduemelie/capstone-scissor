@@ -15,15 +15,15 @@ redisClient.on("error", (error) => {
 redisClient.on("connect", () => {
   console.log("Connected to Redis");
 
-  // Use the Redis client to execute commands here
-  // ...
-  redisClient.set("name", "john", (error, result) => {
-    if (error) {
-      console.error("Error setting Redis key:", error);
-    } else {
-      console.log("Redis key set successfully");
-    }
-  });
+  // // Use the Redis client to execute commands here
+  // // ...
+  // redisClient.set("name", "john", (error, result) => {
+  //   if (error) {
+  //     console.error("Error setting Redis key:", error);
+  //   } else {
+  //     console.log("Redis key set successfully");
+  //   }
+  // });
 });
 
 module.exports = redisClient;
