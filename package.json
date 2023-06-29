@@ -26,6 +26,10 @@
     "shortid": "^2.2.16",
     "valid-url": "^1.0.9"
   },
+  "engines": {
+    "node": ">=14.20.1",
+    "npm": ">=7.0.0"
+  },
   "devDependencies": {
     "jest": "^29.5.0",
     "supertest": "^6.3.3"
