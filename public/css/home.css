@@ -1,9 +1,7 @@
-
-/* style.css */
 body {
   font-family: Arial, sans-serif;
-  background-color: #333;
-  color: #fff;
+  background-color: #add8e6;
+  color: #00008b;
   margin: 0;
   padding: 0;
 }
@@ -11,14 +9,103 @@ body {
 h1 {
   text-align: center;
   margin-top: 30px;
+  color: #00008b;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  width: 80%;
+  margin: auto;
+  border: none; /* Remove border */
+  padding: 20px;
+  border-radius: 10px; /* Apply border-radius */
+  box-shadow: none; /* Remove box shadow */
+}
+
+header {
+  background-color: #6495ed;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+}
+
+.container-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #6495ed;
+  color: white;
+  padding: 5px 10px;
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+  border: none; /* Remove the border */
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+nav li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+nav a {
+  color: #0f0fd7;
+  text-decoration: none;
+}
+
+a {
+  color: #0f0fd7;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: rgb(146, 168, 212);
+}
+
+header img {
+  width: 50px;
+  height: auto;
+}
+
+form,
+div {
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: 18px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  width: 50%;
+  border-radius: 10px; /* Apply border-radius */
 }
 
 form {
   max-width: 400px;
   margin: 20px auto;
   padding: 20px;
-  background-color: #222;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  background-color: #87ceeb;
+  text-align: center;
+}
+
+form h1 {
+  margin-top: 0; /* Remove top margin from <h1> tag */
 }
 
 label {
@@ -27,16 +114,17 @@ label {
 }
 
 input[type="text"] {
-  width: 100%;
+  width: calc(100% - 20px);
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #666;
-  background-color: #444;
+  background-color: #6495ed;
   color: #fff;
+  border-radius: 4px;
 }
 
 button[type="submit"] {
-  background-color: #4caf50;
+  background-color: #4169e1;
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -45,7 +133,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-  background-color: #45a049;
+  background-color: #00008b;
 }
 
 #short-url {
@@ -66,12 +154,17 @@ td {
 }
 
 th {
-  background-color: #444;
+  background-color: #6495ed;
   color: #fff;
+  font-size: 14px;
+}
+
+td {
+  font-size: 14px;
 }
 
 td a {
-  color: #4caf50;
+  color: #4169e1;
   text-decoration: none;
 }
 
@@ -81,7 +174,7 @@ td a:hover {
 
 /* CSS for table buttons */
 .generate-qr-button {
-  background-color: #4caf50;
+  background-color: #4169e1;
   color: #fff;
   padding: 5px 10px;
   border: none;
@@ -90,12 +183,12 @@ td a:hover {
 }
 
 .generate-qr-button:hover {
-  background-color: #45a049;
+  background-color: #00008b;
 }
 
 /* CSS for download QR code button */
 .download-qr-button {
-  background-color: #008cba;
+  background-color: #4169e1;
   color: #fff;
   padding: 5px 10px;
   border: none;
@@ -104,5 +197,56 @@ td a:hover {
 }
 
 .download-qr-button:hover {
-  background-color: #007097;
+  background-color: #00008b;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  form,
+  div {
+    width: 100%;
+  }
+}
+.shortened-url td {
+  max-width: 300px; /* Increase max-width */
+}
+
+.shortened-url {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  width: 60%;
+}
+
+.shortened-url table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: auto; /* Prevent table from expanding to fit content */
+  /* overflow-x: auto; */
+}
+
+.shortened-url th,
+.shortened-url td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  word-wrap: break-word; /* Enable text wrapping */
+  max-width: 200px; /* Set a maximum width for table cells */
+  white-space: normal; /* Allow multiple lines of text */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis (...) for long text */
+}
+
+.shortened-url th:first-child {
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.shortened-url th:last-child {
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
 }

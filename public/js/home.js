@@ -4,7 +4,7 @@ shortURLTableBody.addEventListener("click", async function (event) {
     const shortURL = event.target
       .closest("tr")
       .querySelector("td:nth-child(1)").textContent;
-    console.log(shortURL);
+    // console.log(shortURL);
     const response = await fetch("/shortUrl/generateQrCode", {
       method: "POST",
       headers: {

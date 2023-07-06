@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="../css/register.css"/>
+    <title>Signup Page</title>
+  </head>
+  <body>
+    <h1>Signup Page</h1>
+    <form action="/Users/signup" method="POST"> <!-- Specify the route for form submission -->
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username">
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email">
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password">
+
+      <input type="submit" value="Submit">
+    </form>
+    <p>Already have an account? <a href="/login">Log in here</a>.</p>
+  </body>
+</html>
