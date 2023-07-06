@@ -1,9 +1,9 @@
-const ShortURL = require("../model/shortUrlModal");
+const ShortURL = require("../model/shortUrlModel");
 const User = require("../model/userModel");
 const helper = require("../utils/helper");
 const fs = require("fs");
 
-const QRCode = require("../model/qrCode");
+const QRCode = require("../model/qrCodeModel");
 const qrcode = require("qrcode");
 const RedisClient = require("../config/redisClient");
 const AppError = require("../utils/AppError");

@@ -1,5 +1,5 @@
 const User = require("../model/userModel");
-const ShortURL = require("../model/shortUrlModal");
+const ShortURL = require("../model/shortUrlModel");
 
 const getShortURLsForUser = async (userId) => {
     const user = await User.findById(userId);
