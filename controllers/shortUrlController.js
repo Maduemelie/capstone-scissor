@@ -171,6 +171,8 @@ const updateShortURLVisits = async (req, res) => {
 
     // Save the analytics data
     await analytics.save();
+
+    // Find the user who generated the ShortURL
     const user = await User.findById(userId);
 
     if (user) {

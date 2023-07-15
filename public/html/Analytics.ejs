@@ -1,63 +1,11 @@
 
 
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Analytics</title>
-  </head>
-  <body>
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/my-urls">My URLs</a></li>
-        <li><a href="/about">About</a></li>
-      </ul>
-    </nav>
-
-    <h1>Analytics</h1>
-
-    <% if (!isLoggedIn) { %>
-    <p>Please log in to view your URLs and analytics data</p>
-    <% } else { %>
-    <table>
-      <thead>
-        <tr>
-          <th>Short URL</th>
-          <th>Long URL</th>
-          <th>User Agent</th>
-          <th>IP Address</th>
-          <th>Location</th>
-          <th>Timestamp</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% analytics.forEach((analytic) => { %>
-        <tr>
-          <td><%= analytic.shortURL.shortURL %></td>
-          <td><%= analytic.shortURL.longURL %></td>
-          <td><%= analytic.userAgent %></td>
-          <td><%= analytic.ipAddress %></td>
-          <td>
-            <%= analytic.location.city %>, <%= analytic.location.country %>
-          </td>
-          <td><%= new Date(analytic.timestamp).toLocaleString() %></td>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
-    <% } %>
-  </body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/analytics.css">
     <title>Analytics</title>
   </head>
   <body>
