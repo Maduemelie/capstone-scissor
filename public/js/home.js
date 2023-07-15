@@ -1,3 +1,32 @@
+//   // Add an event listener to the short URL link
+ 
+
+//     const shortURLLinks = document.querySelectorAll("a[data-short-url-id]");
+//     shortURLLinks.forEach((link) => {
+//       link.addEventListener("click", redirectToLongURL);
+//     });
+  
+
+// function redirectToLongURL(event) {
+//   event.preventDefault();
+//   const shortURL = event.target.getAttribute("data-short-url-id");
+//   console.log(shortURL);
+//   fetch(`/shortUrl/${shortURL}`)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       console.log("Success:", data);
+//       const longURL = data.longURL;
+//       console.log(longURL);
+//       window.location.href = longURL;
+//     })
+//     .catch((error) => {
+//       console.error("Error:", error);
+//     });
+// }
+    
+
+
+
 const shortURLTableBody = document.getElementById("shortURLTableBody");
 shortURLTableBody.addEventListener("click", async function (event) {
   if (event.target.classList.contains("generate-qr-button")) {

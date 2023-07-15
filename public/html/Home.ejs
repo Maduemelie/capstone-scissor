@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>URL Shortener</title>
     <link rel="stylesheet" href="../css/home.css" />
   </head>
@@ -17,9 +18,9 @@
       </header>
       <nav>
         <ul>
+          <li><a href="/">Home</a></li>
           <li><a href="/my-urls">My URLs</a></li>
-          <li>Already a member? <a href="/login">Login here</a></li>
-          <li>Not a member? <a href="/Register">Register</a></li>
+          <li><a href="/about">About</a></li>
         </ul>
       </nav>
     </div>
@@ -37,7 +38,7 @@
       </form>
       <div class="shortened-url">
         <h2>My Urls History</h2>
-        <div style="overflow-x: auto; width: 100%;">
+        <div style="overflow-x: auto; width: 100%">
           <table>
             <thead>
               <tr>
@@ -51,16 +52,15 @@
             <tbody id="shortURLTableBody">
               <% shortURLs.forEach((url) => { %>
               <tr>
+                <td><a href="<%= url.longURL %>"><%= url.longURL %></a></td>
                 <td>
-                  <a href="<%= url.longURL %>" target="_blank"
-                    ><%= url.longURL %></a
-                  >
-                </td>
-                <td>
-                  <a href="<%= url.shortURL %>" target="_blank"
+                  <a
+                    href="<%= url.shortURL %>"
+                    data-short-url-id="<%= url.shortURL %>"
                     ><%= url.shortURL %></a
                   >
                 </td>
+                <!-- Added data-short-url-id attribute -->
                 <td><%= url.customURL || "" %></td>
                 <td><%= url.visits %></td>
                 <td>

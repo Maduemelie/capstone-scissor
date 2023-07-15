@@ -2,7 +2,7 @@ const ShortURL = require("../model/shortUrlModel");
 const User = require("../model/userModel");
 const helper = require("../utils/helper");
 const fs = require("fs");
-
+const Analytics = require("../model/AnalyticsModel");
 const QRCode = require("../model/qrCodeModel");
 const qrcode = require("qrcode");
 const RedisClient = require("../config/redisClient");
@@ -116,7 +116,7 @@ const generateShortURL = catchAsync(async (req, res, next) => {
     // Save the document to the database
     await newShortURL.save();
 
-    const user = await helper.associateShortURLWithUser(userId, newShortURL);
+    await helper.associateShortURLWithUser(userId, newShortURL);
     const shortURLs = await helper.getShortURLsForUser(userId);
 
     // Limit the shortURLs to the last 3 URLs
@@ -128,14 +128,16 @@ const generateShortURL = catchAsync(async (req, res, next) => {
     const shortURLs = await helper.getShortURLsForUser(userId);
     const lastThreeURLs = shortURLs.slice(-3);
 
-    return res.render("Home", { shortURLs: lastThreeURLs, error: error.message });
+    return res.render("Home", {
+      shortURLs: lastThreeURLs,
+      error: error.message,
+    });
   }
 });
 
-
-
 const updateShortURLVisits = async (req, res) => {
-  const shortURL = req.params.shortUrl;
+  const shortURL = req.params.shortURLId;
+  const userId = req.user && req.user._id;
 
   try {
     // Find the ShortURL document with the provided short URL
@@ -148,17 +150,186 @@ const updateShortURLVisits = async (req, res) => {
     // Update the visits variable by incrementing its value
     url.visits += 1;
 
+    // Get the IP address from the request
+    // const ipAddress = req.ip;
+    const ipAddress = "197.210.44.98";
+
+    // Get the user agent from the request
+    const userAgent = req.headers["user-agent"];
+
+    // Get the location information for the IP address
+    const location = await helper.getLocationByIp(ipAddress);
+
+    // Create a new Analytics document
+    const analytics = new Analytics({
+      shortURL: url._id,
+      userAgent,
+      ipAddress,
+      location,
+    });
+    console.log(analytics);
+
+    // Save the analytics data
+    await analytics.save();
+    const user = await User.findById(userId);
+
+    if (user) {
+      // Associate the analytics with the user
+      user.analytics.push(analytics._id);
+
+      // Save the updated user document
+      await user.save();
+    }
+    // Associate the analytics with the user
+ 
     // Save the updated ShortURL document
     await url.save();
 
     // Redirect the user to the long URL
-    return res.redirect(url.longURL);
+    res.redirect(url.longURL);
+    // console.log(url.longURL);
+    // console.log("redirected");
   } catch (error) {
     console.error("Error updating visits:", error);
     return res.status(500).send("Internal Server Error");
   }
 };
+
+// Function to get analytics data for the user's short URLs
+const analyticsHandler = async (req, res) => {
+  const userId = req.user && req.user._id;
+  if (!userId) {
+    // Handle the case where there is no userId
+    return res.render("Analytics", { isLoggedIn: false });
+  }
+  try {
+    // Find the user by userId and populate the shortURLs field
+    const user = await User.findById(userId).populate("shortURLs");
+
+    // Extract the shortURLs from the user object
+    const urls = user.shortURLs;
+
+    // Perform the $lookup aggregation to get analytics data for each shortURL
+    const analytics = await Analytics.aggregate([
+      {
+        $match: { shortURL: { $in: urls.map((url) => url._id) } },
+      },
+      {
+        $lookup: {
+          from: "shorturls",
+          localField: "shortURL",
+          foreignField: "_id",
+          as: "shortURL",
+        },
+      },
+      {
+        $unwind: "$shortURL",
+      },
+      {
+        $project: {
+          "shortURL.shortURL": 1,
+          "shortURL.longURL": 1,
+          userAgent: 1,
+          ipAddress: 1,
+          location: 1,
+          timestamp: 1,
+        },
+      },
+    ]);
+    console.log(analytics, "analytics");
+    return res.render("Analytics", { isLoggedIn: true, analytics });
+  } catch (error) {
+    console.error("Error getting analytics:", error);
+    return res.status(500).send("Internal Server Error");
+  }
+};
+
+// const analyticsHandler = async (req, res) => {
+//   const userId = req.user && req.user._id;
+//   console.log(userId);
+//   if (!userId) {
+//     // Handle the case where there is no userId
+//     return res.render("Analytics", { isLoggedIn: false });
+//   }
+//   try {
+//     // Find all the ShortURL documents created by the user
+
+//     const user = await User.findById(userId).populate("shortURLs");
+//     const urls = user.shortURLs;
+//     console.log(urls, "urls");
+//     const urlData = await Promise.all(
+//       urls.map(async (url) => {
+//         const analytics = await Analytics.find({ shortURL: url._id }); // Use url._id instead of url.shortURL
+//         const extractedData = analytics.map((analytic) => ({
+//           shortURL: url.shortURL, // Access the shortURL from the urls array
+//           longURL: url.longURL, // Access the longURL from the urls array
+//           visits: url.visits, // Access the visits from the urls array
+//           timestamp: analytic.timestamp,
+//           userAgent: analytic.userAgent,
+//           ipAddress: analytic.ipAddress,
+//           location: analytic.location,
+//         }));
+
+//         console.log(extractedData , "extractedData");
+//         return extractedData;
+//       })
+//     );
+
+//     console.log(urlData, "urlData");
+
+//     // console.log(url);
+
+//     // Get all the analytics data for the short URLs
+//     const analytics = await Analytics.aggregate([
+//       {
+//         $match: { shortURL: { $in: urls.map((url) => url._id) } },
+//       },
+//       {
+//         $lookup: {
+//           from: "shorturls",
+//           localField: "shortURL",
+//           foreignField: "_id",
+//           as: "shortURL",
+//         },
+//       },
+//       {
+//         $unwind: "$shortURL",
+//       },
+//       {
+//         $lookup: {
+//           from: "analytics",
+//           localField: "shortURL._id",
+//           foreignField: "shortURL",
+//           as: "visits",
+//         },
+//       },
+//       {
+//         $addFields: {
+//           visits: { $size: "$visits" },
+//         },
+//       },
+//       {
+//         $project: {
+//           "shortURL.shortURL": 1,
+//           "shortURL.longURL": 1,
+//           visits: 1,
+//           userAgent: 1,
+//           ipAddress: 1,
+//           location: 1,
+//           timestamp: 1,
+//         },
+//       },
+//     ]);
+//     console.log(analytics);
+//     return res.render("Analytics", { isLoggedIn: true, analytics: urlData });
+//   } catch (error) {
+//     console.error("Error getting analytics:", error);
+//     return res.status(500).send("Internal Server Error");
+//   }
+// };
+
 module.exports = {
+  analyticsHandler,
   generateQRCodeHandler,
   updateShortURLVisits,
   generateShortURL,

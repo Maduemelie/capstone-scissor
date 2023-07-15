@@ -5,7 +5,7 @@ const shortUrlController = require("../controllers/shortUrlController");
 
 router.route("/shorts").post(shortUrlController.generateShortURL);
 router.route("/generateQrCode").post(shortUrlController.generateQRCodeHandler);
-router.route("/:shortUrl").get(shortUrlController.updateShortURLVisits);
+router.route("/:shortURLId").get(shortUrlController.updateShortURLVisits);
 
 
 

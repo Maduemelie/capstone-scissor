@@ -26,9 +26,6 @@ const AnalyticsSchema = new mongoose.Schema({
       },
       city: {
         type: String
-      },
-      postalCode: {
-        type: String
       }
     }
   }
