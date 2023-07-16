@@ -36,7 +36,7 @@ router.get("/Users/login", async(req, res) => {
   const shortURLs = await helper.getShortURLsForUser(userId, page, limit);
 
  // Pass the shortURLs, page, and limit variables to the template
- res.render("home", { shortURLs, page, limit });
+ res.render("Home", { shortURLs, page, limit });
 });
 
 //redirect to long url
