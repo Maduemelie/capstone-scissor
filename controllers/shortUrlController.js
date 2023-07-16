@@ -131,7 +131,7 @@ const generateShortURL = catchAsync(async (req, res, next) => {
     // Paginate the short URLs
     const paginatedURLs = shortURLs.slice((page - 1) * limit, page * limit);
 
-    return res.render("Home", { shortURLs: paginatedURLs, page });
+    return res.render("Home", { shortURLs: paginatedURLs, page,  limit });
   } catch (error) {
     const userId = req.user._id;
     const shortURLs = await helper.getShortURLsForUser(userId);
@@ -140,6 +140,7 @@ const generateShortURL = catchAsync(async (req, res, next) => {
     return res.render("Home", {
       shortURLs: paginatedURLs,
       page,
+      limit,
       error: error.message,
     });
   }
