@@ -161,8 +161,8 @@ const updateShortURLVisits = async (req, res) => {
     url.visits += 1;
 
     // Get the IP address from the request
-    // const ipAddress = req.ip;
-    const ipAddress = "197.210.44.98";
+    const ipAddress = req.ip;
+    // const ipAddress = "197.210.44.98";
 
     // Get the user agent from the request
     const userAgent = req.headers["user-agent"];
