@@ -131,7 +131,7 @@ const generateShortURL = catchAsync(async (req, res, next) => {
     // Paginate the short URLs
     const paginatedURLs = shortURLs.slice((page - 1) * limit, page * limit);
 
-    return res.render("Home", { shortURLs: paginatedURLs });
+    return res.render("Home", { shortURLs: paginatedURLs, page });
   } catch (error) {
     const userId = req.user._id;
     const shortURLs = await helper.getShortURLsForUser(userId);
@@ -139,6 +139,7 @@ const generateShortURL = catchAsync(async (req, res, next) => {
 
     return res.render("Home", {
       shortURLs: paginatedURLs,
+      page,
       error: error.message,
     });
   }
@@ -211,11 +212,11 @@ const analyticsHandler = async (req, res) => {
     // Handle the case where there is no userId
     return res.render("Analytics", { isLoggedIn: false });
   }
-   // Get the current page number from the query string, default to 1
-   const page = parseInt(req.query.page) || 1;
+  // Get the current page number from the query string, default to 1
+  const page = parseInt(req.query.page) || 1;
 
-   // Set the number of records to display per page
-   const limit = 10;
+  // Set the number of records to display per page
+  const limit = 10;
   try {
     // Find the user by userId and populate the shortURLs field
     const user = await User.findById(userId).populate("shortURLs");
@@ -258,13 +259,17 @@ const analyticsHandler = async (req, res) => {
       },
     ]);
     // console.log(analytics, "analytics");
-    return res.render("Analytics", { isLoggedIn: true, analytics, page, limit })
+    return res.render("Analytics", {
+      isLoggedIn: true,
+      analytics,
+      page,
+      limit,
+    });
   } catch (error) {
     console.error("Error getting analytics:", error);
     return res.status(500).send("Internal Server Error");
   }
 };
-
 
 module.exports = {
   analyticsHandler,
