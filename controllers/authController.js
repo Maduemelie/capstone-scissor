@@ -47,13 +47,8 @@ const userLogin = (req, res, next) => {
       if (err) {
         return res.render("Login");
       }
-      const userId = user._id;
-      const shortURLs = await helper.getShortURLsForUser(userId);
 
-      // Limit the shortURLs to the last 3 URLs
-      const lastThreeURLs = shortURLs.slice(-3);
-
-      return res.render("Home", { shortURLs: lastThreeURLs });
+      res.redirect("/Users/login");
     });
   })(req, res, next);
 };

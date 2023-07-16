@@ -210,8 +210,36 @@ td a:hover {
     width: 100%;
   }
 }
+/* Add styles for the "pagination" div */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  box-shadow: none;
+}
+
+.pagination a {
+  background-color: #4169e1;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  font-size: 15px;
+  /* padding: 10px 20px; */
+  margin: 0 10px;
+  border-radius: 4px;
+}
+
+.pagination a:hover {
+  background-color: #00008b;
+}
+
 .shortened-url td {
   max-width: 300px; /* Increase max-width */
+  word-wrap: break-word; /* Enable text wrapping */
+  white-space: normal; /* Allow multiple lines of text */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis (...) for long text */
 }
 
 .shortened-url {
@@ -220,6 +248,7 @@ td a:hover {
   align-items: center;
   margin-top: 40px;
   width: 60%;
+  box-shadow: none;
 }
 
 .shortened-url table {

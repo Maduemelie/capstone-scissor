@@ -1,3 +1,5 @@
+
+// This class is used to create an error object that can be used to throw errors in the application.
 class AppError extends Error {
     constructor(message, statusCode) {
       super(message);

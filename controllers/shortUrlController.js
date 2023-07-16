@@ -9,6 +9,7 @@ const RedisClient = require("../config/redisClient");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
+// Function to generate a QR code
 const generateQRCode = async (text) => {
   const cacheKey = `qrcode:${text}`;
   const cachedQrcode = await RedisClient.get(cacheKey);
@@ -16,7 +17,7 @@ const generateQRCode = async (text) => {
     console.log("cache");
     return cachedQrcode;
   }
-  console.log(text);
+
   return new Promise((resolve, reject) => {
     if (!text) {
       const error = new Error("Invalid input: text is empty or null");
@@ -58,6 +59,7 @@ const generateQRCode = async (text) => {
   });
 };
 
+// Function to generate a QR code
 const generateQRCodeHandler = catchAsync(async (req, res, next) => {
   const text = req.body.text; // Access the input text from the request body or query parameters
 
@@ -88,10 +90,17 @@ const generateQRCodeHandler = catchAsync(async (req, res, next) => {
 
   res.send(qrCodeDataUrl); // Send the updated user object as the response
 });
-// Function to generate a new ShortURL document
+
+// Function to generate a short URL
 const generateShortURL = catchAsync(async (req, res, next) => {
   const { longURL, customURL } = req.body;
   const userId = req.user._id;
+
+  // Get the current page number from the query string, default to 1
+  const page = parseInt(req.query.page) || 1;
+
+  // Set the number of records to display per page
+  const limit = 5;
 
   try {
     // Check if the custom URL or long URL already exists in the database
@@ -119,22 +128,23 @@ const generateShortURL = catchAsync(async (req, res, next) => {
     await helper.associateShortURLWithUser(userId, newShortURL);
     const shortURLs = await helper.getShortURLsForUser(userId);
 
-    // Limit the shortURLs to the last 3 URLs
-    const lastThreeURLs = shortURLs.slice(-3);
+    // Paginate the short URLs
+    const paginatedURLs = shortURLs.slice((page - 1) * limit, page * limit);
 
-    return res.render("Home", { shortURLs: lastThreeURLs });
+    return res.render("Home", { shortURLs: paginatedURLs });
   } catch (error) {
     const userId = req.user._id;
     const shortURLs = await helper.getShortURLsForUser(userId);
-    const lastThreeURLs = shortURLs.slice(-3);
+    const paginatedURLs = shortURLs.slice((page - 1) * limit, page * limit);
 
     return res.render("Home", {
-      shortURLs: lastThreeURLs,
+      shortURLs: paginatedURLs,
       error: error.message,
     });
   }
 });
 
+// Function to update the visits variable of a ShortURL document
 const updateShortURLVisits = async (req, res) => {
   const shortURL = req.params.shortURLId;
   const userId = req.user && req.user._id;
@@ -167,7 +177,7 @@ const updateShortURLVisits = async (req, res) => {
       ipAddress,
       location,
     });
-    console.log(analytics);
+    // console.log(analytics);
 
     // Save the analytics data
     await analytics.save();
@@ -182,15 +192,12 @@ const updateShortURLVisits = async (req, res) => {
       // Save the updated user document
       await user.save();
     }
-    // Associate the analytics with the user
- 
+
     // Save the updated ShortURL document
     await url.save();
 
     // Redirect the user to the long URL
     res.redirect(url.longURL);
-    // console.log(url.longURL);
-    // console.log("redirected");
   } catch (error) {
     console.error("Error updating visits:", error);
     return res.status(500).send("Internal Server Error");
@@ -204,6 +211,11 @@ const analyticsHandler = async (req, res) => {
     // Handle the case where there is no userId
     return res.render("Analytics", { isLoggedIn: false });
   }
+   // Get the current page number from the query string, default to 1
+   const page = parseInt(req.query.page) || 1;
+
+   // Set the number of records to display per page
+   const limit = 10;
   try {
     // Find the user by userId and populate the shortURLs field
     const user = await User.findById(userId).populate("shortURLs");
@@ -231,15 +243,22 @@ const analyticsHandler = async (req, res) => {
         $project: {
           "shortURL.shortURL": 1,
           "shortURL.longURL": 1,
+          "shortURL.visits": 1, // Access the visits from the urls array
           userAgent: 1,
           ipAddress: 1,
           location: 1,
           timestamp: 1,
         },
       },
+      {
+        $skip: (page - 1) * limit, // skip records for previous pages
+      },
+      {
+        $limit: limit, // limit the number of records returned
+      },
     ]);
-    console.log(analytics, "analytics");
-    return res.render("Analytics", { isLoggedIn: true, analytics });
+    // console.log(analytics, "analytics");
+    return res.render("Analytics", { isLoggedIn: true, analytics, page, limit })
   } catch (error) {
     console.error("Error getting analytics:", error);
     return res.status(500).send("Internal Server Error");

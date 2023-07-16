@@ -1,12 +1,31 @@
+
+// Import the models
 const User = require("../model/userModel");
 const ShortURL = require("../model/shortUrlModel");
+// Import the MaxMind WebServiceClient
 const WebServiceClient = require("@maxmind/geoip2-node").WebServiceClient;
 
-const getShortURLsForUser = async (userId) => {
-  const user = await User.findById(userId);
-  const shortURLs = await ShortURL.find({ _id: { $in: user.shortURLs } });
-  return shortURLs;
+
+// Get the short URLs for a user
+
+const getShortURLsForUser = async (userId, page = 1, limit = 5) => {
+  // Find the user by userId and populate the shortURLs field
+  const user = await User.findById(userId).populate({
+    path: "shortURLs",
+    options: {
+      skip: (page - 1) * limit,
+      limit,
+    },
+  });
+
+  return user.shortURLs;
 };
+
+// const getShortURLsForUser = async (userId) => {
+//   const user = await User.findById(userId);
+//   const shortURLs = await ShortURL.find({ _id: { $in: user.shortURLs } });
+//   return shortURLs;
+// };
 
 const associateShortURLWithUser = async (userId, shortURL) => {
   // Find the user who generated the ShortURL
@@ -29,6 +48,7 @@ const getLocationByIp = async (ipAddress) => {
     const countryResponse = await client.country(ipAddress);
     const cityResponse = await client.city(ipAddress);
 
+    // Extract the country and city from the response
     const location = {
       country: countryResponse.country.names ? countryResponse.country.names.en || countryResponse.country.names.default : '',
       city: cityResponse.city && cityResponse.city.names ? cityResponse.city.names.en || cityResponse.city.names.default : '',
@@ -40,30 +60,26 @@ const getLocationByIp = async (ipAddress) => {
   }
 };
 
+//get long url
+const getLongURL = async (shortURLId) => { 
+  try {
+    // Find the ShortURL document with the provided short URL
+    const url = await ShortURL.findOne({ shortURL: shortURLId });
+    if (!url) {
+      throw new Error("Short URL not found");
+    }
+    return url;
+  } catch (error) {
+    console.error("Error getting analytics:", error);
+    throw error;
+  }
+};
 
-// const shortUrlAnalytics = async (shortURLId, userId) => {
-//   try {
-//     // Find the ShortURL document with the provided short URL
-//     const url = await ShortURL.findOne({ shortURL: shortURLId });
-//     if (!url) {
-//       throw new Error("Short URL not found");
-//     }
-//     // Get the QR codes for the user
-//     const qrCodes = await QRCode.find({ user: userId });
-//     // Get all the analytics data for the short URL
-//     const analytics = await Analytics.find({ shortURL: url._id });
-
-//     return { analytics, qrCodes };
-//   } catch (error) {
-//     console.error("Error getting analytics:", error);
-//     throw error;
-//   }
-// };
 
 
 module.exports = {
   getShortURLsForUser,
   associateShortURLWithUser,
   getLocationByIp,
-  // shortUrlAnalytics,
+  getLongURL,
 };

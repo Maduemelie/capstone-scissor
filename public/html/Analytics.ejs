@@ -1,17 +1,15 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/analytics.css">
+    <link rel="stylesheet" href="../css/analytics.css" />
     <title>Analytics</title>
   </head>
   <body>
     <nav>
       <ul>
-        <li><a href="/">Home</a></li>
+        <li><a href="/Users/login">Home</a></li>
         <li><a href="/my-urls">My URLs</a></li>
         <li><a href="/about">About</a></li>
       </ul>
@@ -31,7 +29,7 @@
           <th>IP Address</th>
           <th>Location</th>
           <th>Timestamp</th>
-          <th>Visits</th> <!-- Added visits column header -->
+          <th>Visits</th><!-- Added visits column header -->
         </tr>
       </thead>
       <tbody>
@@ -43,11 +41,21 @@
           <td><%= item.ipAddress %></td>
           <td><%= item.location.city %>, <%= item.location.country %></td>
           <td><%= new Date(item.timestamp).toLocaleString() %></td>
-          <td><%= item.shortURL.visits %></td> <!-- Added visits column -->
+          <td><%= item.shortURL.visits %></td><!-- Added visits column -->
         </tr>
         <% }); %>
       </tbody>
     </table>
+
+  
+    <% if (analytics.length > 0) { %>
+    <a href="/my-urls?page=<%= page - 1 %>">Previous</a>
+    <% } %>
+
+    <% if (analytics.length === limit) { %>
+    <a href="/my-urls?page=<%= page + 1 %>">Next</a>
+    <% } %>
+
     <% } %>
   </body>
 </html>

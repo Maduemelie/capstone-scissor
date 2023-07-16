@@ -18,7 +18,7 @@
       </header>
       <nav>
         <ul>
-          <li><a href="/">Home</a></li>
+          <li><a href="/Users/login">Home</a></li>
           <li><a href="/my-urls">My URLs</a></li>
           <li><a href="/about">About</a></li>
         </ul>
@@ -36,6 +36,7 @@
         <br />
         <button type="submit">Generate Short URL</button>
       </form>
+
       <div class="shortened-url">
         <h2>My Urls History</h2>
         <div style="overflow-x: auto; width: 100%">
@@ -70,6 +71,13 @@
               <% }); %>
             </tbody>
           </table>
+        </div>
+        <div class="pagination">
+          <% if (shortURLs.length > 0) { %>
+          <a href="/Users/login?page=<%= page - 1 %>">Previous</a>
+          <% } %> <% if (shortURLs.length === limit) { %>
+          <a href="/Users/login?page=<%= page + 1 %>">Next</a>
+          <% } %>
         </div>
       </div>
     </div>

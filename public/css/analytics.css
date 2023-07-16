@@ -40,6 +40,36 @@ body {
   
   th,
   td {
+    padding: 5px; /* reduce padding */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #6495ed;
+    color: #fff;
+  }
+  
+  td {
+    font-size: 14px; /* reduce font size */
+    word-wrap: break-word; /* enable text wrapping */
+    max-width: 200px; /* set a maximum width for table cells */
+  }
+  
+  td a {
+    color: #4169e1;
+  }
+  
+  td a:hover {
+    text-decoration: underline;
+  }
+   /* table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th,
+  td {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -57,4 +87,4 @@ body {
   td a:hover {
     text-decoration: underline;
   }
-  
+   */
