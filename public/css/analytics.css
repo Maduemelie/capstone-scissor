@@ -63,28 +63,4 @@ body {
   td a:hover {
     text-decoration: underline;
   }
-   /* table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th,
-  td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  th {
-    background-color: #6495ed;
-    color: #fff;
-  }
-  
-  td a {
-    color: #4169e1;
-  }
-  
-  td a:hover {
-    text-decoration: underline;
-  }
-   */
+   

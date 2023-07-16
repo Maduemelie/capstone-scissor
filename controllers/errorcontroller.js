@@ -5,7 +5,7 @@ const sendError = (err, res) => {
     status: err.status,
     message: err.message,
     error: err,
-    stack: err.stack // Only in development
+    // stack: err.stack // Only in development
   });
 };
 
