@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="../css/home.css" />
+  </head>
+  <body>
+    <div class="container-header">
+      <header>
+        <h1>
+          <img
+            src="../img/_34eab40d-bda8-4cc0-8754-9c8316c4c801.jpeg"
+            alt="Trimly Logo"
+          />Trimly
+        </h1>
+      </header>
+      <nav>
+        <ul>
+          <li><a href="/Users/login">Home</a></li>
+          <li><a href="/my-urls">My URLs</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="container">
+      <form action="/shortUrl/shorts" method="POST">
+        <h1>URL Shortener</h1>
+        <label for="longURL">Original URL:</label>
+        <input type="text" id="longURL" name="longURL" required />
+        <br />
+        <label for="customURL">Custom URL (optional):</label>
+        <input type="text" id="customURL" name="customURL" />
+        <br />
+        <button type="submit">Generate Short URL</button>
+      </form>
+
+      <div class="shortened-url">
+        <h2>My Urls History</h2>
+        <div style="overflow-x: auto; width: 100%">
+          <table>
+            <thead>
+              <tr>
+                <th>Long URL</th>
+                <th>Short URL</th>
+                <th>Custom URL</th>
+                <th>Visits</th>
+                <th>Generate QR Code</th>
+              </tr>
+            </thead>
+            <tbody id="shortURLTableBody">
+              <% shortURLs.forEach((url) => { %>
+              <tr>
+                <td><a href="<%= url.longURL %>"><%= url.longURL %></a></td>
+                <td>
+                  <a
+                    href="<%= url.shortURL %>"
+                    data-short-url-id="<%= url.shortURL %>"
+                    ><%= url.shortURL %></a
+                  >
+                </td>
+                <!-- Added data-short-url-id attribute -->
+                <td><%= url.customURL || "" %></td>
+                <td><%= url.visits %></td>
+                <td>
+                  <button class="generate-qr-button">Generate QR Code</button>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <% if (shortURLs.length > 0) { %>
+          <a href="/Users/login?page=<%= page - 1 %>">Previous</a>
+          <% } %> <% if (shortURLs.length === limit) { %>
+          <a href="/Users/login?page=<%= page + 1 %>">Next</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <script src="../js/home.js"></script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 const User = require("../model/userModel");
 const passport = require("passport");
-const path = require('path')
+const path = require("path");
+const helper = require("../utils/helper");
 
 const userSignUp = async (req, res) => {
   const { username, email, password } = req.body;
@@ -17,45 +18,39 @@ const userSignUp = async (req, res) => {
     // Save the new user to the database
     await newUser.save();
 
-    req.login(newUser, (error) => {
+    req.login(newUser, async (error) => {
       if (error) {
-        const signupPage = path.join(__dirname, '..', 'public', 'html', 'Register.html');
-      res.sendFile(signupPage);
+        return res.render("Register", { error });
       }
 
-      const homePage = path.join(__dirname, '..', 'public', 'html', 'Home.html');
-      res.sendFile(homePage);
+      // Redirect to the Home page
+      const userId = newUser._id;
+      const shortURLs = await helper.getShortURLsForUser(userId);
+      res.render("Home", { shortURLs });
     });
   } catch (error) {
-    const signupPage = path.join(__dirname, '..', 'public', 'html', 'Register.html');
-    res.sendFile(signupPage);
+    res.render("Register", { error });
   }
 };
 
 const userLogin = (req, res, next) => {
-    passport.authenticate("local", (err, user) => {
+  passport.authenticate("local", (err, user) => {
+    if (err) {
+      return res.render("Login");
+    }
+
+    if (!user) {
+      return res.render("Login");
+    }
+
+    req.login(user, async (err) => {
       if (err) {
-          const filePath = path.join(__dirname, "..", "public", "html", "Login.html");
-          console.log(user)
-        return res.sendFile(filePath);
+        return res.render("Login");
       }
-      
-      if (!user) {
-          const filePath = path.join(__dirname, "..", "public", "html", "Login.html");
-          // console.log("second")
-        return res.sendFile(filePath);
-      }
-      
-      req.login(user, (err) => {
-        if (err) {
-            const filePath = path.join(__dirname, "..", "public", "html", "Login.html");
-            // console.log("third")
-          return res.sendFile(filePath);
-        }
-        
-        const filePath = path.join(__dirname, "..", "public", "html", "Home.html");
-        res.sendFile(filePath);
-      });
-    })(req, res, next);
-  };
+
+      res.redirect("/Users/login");
+    });
+  })(req, res, next);
+};
+
 module.exports = { userSignUp, userLogin };

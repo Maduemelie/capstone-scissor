@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
       ref: "ShortURL",
     },
   ],
+  analytics: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Analytics",
+    },
+  ],
   qrCodes: [
     {
       type: mongoose.Schema.Types.ObjectId,
