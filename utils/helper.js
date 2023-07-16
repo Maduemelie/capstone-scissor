@@ -41,7 +41,16 @@ const MAXMIND_USER_ID = process.env.MAXMIND_USER_ID;
 
 // Get the location of the user based on their IP address
 const getLocationByIp = async (ipAddress) => {
+  
   try {
+     // Check if the IP address is the loopback address '::1'
+     if (ipAddress === '::1') {
+      // Provide default location information or return empty location
+      return {
+        country: 'Nigeria',
+        city: 'Lagos',
+      };
+    }
     const client = new WebServiceClient(MAXMIND_USER_ID, MAXMIND_LICENSE_KEY, {
       host: "geolite.info",
     });
