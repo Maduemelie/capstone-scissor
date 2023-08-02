@@ -48,12 +48,12 @@ header h1 {
   margin-bottom: 20px;
 }
 
-.logo {
+/* .logo {
   width: 100px;
   height: auto;
   margin-bottom: 10px;
-  border: none; /* Remove the border */
-}
+  border: none; 
+} */
 
 nav ul {
   list-style: none;

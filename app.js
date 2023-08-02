@@ -63,10 +63,12 @@ app.use("/shortUrl", shortUrlRoute);
 app.use( HomeRoute);
 
 
+
 app.all("*", (req, res, next) => {
   next(new AppError(` can't find ${req.originalUrl} on this server`, 404));
 });
 
 app.use(errorcontroller); //error controller
+
 
 module.exports = app;
