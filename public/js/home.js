@@ -1,11 +1,9 @@
 //   // Add an event listener to the short URL link
- 
 
 //     const shortURLLinks = document.querySelectorAll("a[data-short-url-id]");
 //     shortURLLinks.forEach((link) => {
 //       link.addEventListener("click", redirectToLongURL);
 //     });
-  
 
 // function redirectToLongURL(event) {
 //   event.preventDefault();
@@ -23,9 +21,6 @@
 //       console.error("Error:", error);
 //     });
 // }
-    
-
-
 
 const shortURLTableBody = document.getElementById("shortURLTableBody");
 shortURLTableBody.addEventListener("click", async function (event) {
@@ -64,8 +59,7 @@ shortURLTableBody.addEventListener("click", async function (event) {
 
       // Replace the "Generate QR Code" button with the download button
       const tableRow = event.target.closest("tr");
-      const generateQRCodeCell =
-        tableRow.querySelector("td:nth-child(5)");
+      const generateQRCodeCell = tableRow.querySelector("td:nth-child(5)");
       generateQRCodeCell.innerHTML = ""; // Clear the cell content
       generateQRCodeCell.appendChild(downloadButton);
     } else {
