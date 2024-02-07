@@ -17,6 +17,9 @@ const getShortURLsForUser = async (userId, page = 1, limit = 5) => {
       limit,
     },
   });
+    if (!user || user.shortURLs.length === 0) {
+      return [];
+    }
 
   return user.shortURLs;
 };

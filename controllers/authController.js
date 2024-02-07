@@ -1,7 +1,7 @@
-const User = require("../model/userModel");
-const passport = require("passport");
-const path = require("path");
-const helper = require("../utils/helper");
+const User = require('../model/userModel');
+const passport = require('passport');
+const path = require('path');
+const helper = require('../utils/helper');
 
 const userSignUp = async (req, res) => {
   const { username, email, password } = req.body;
@@ -9,46 +9,43 @@ const userSignUp = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already taken" });
+      return res.status(400).json({ message: 'Email already taken' });
     }
 
-    // Create a new user instance
     const newUser = new User({ username, email, password });
 
-    // Save the new user to the database
     await newUser.save();
 
     req.login(newUser, async (error) => {
       if (error) {
-        return res.render("Register", { error });
+        return res.render('Register', { error });
       }
 
-      // Redirect to the Home page
       const userId = newUser._id;
       const shortURLs = await helper.getShortURLsForUser(userId);
-      res.render("Home", { shortURLs });
+      res.render('Home', { shortURLs });
     });
   } catch (error) {
-    res.render("Register", { error });
+    res.render('Register', { error });
   }
 };
 
 const userLogin = (req, res, next) => {
-  passport.authenticate("local", (err, user) => {
+  passport.authenticate('local', (err, user) => {
     if (err) {
-      return res.render("Login");
+      return res.render('Login');
     }
 
     if (!user) {
-      return res.render("Login");
+      return res.render('Login');
     }
 
     req.login(user, async (err) => {
       if (err) {
-        return res.render("Login");
+        return res.render('Login');
       }
 
-      res.redirect("/Users/login");
+      res.redirect('/Users/login');
     });
   })(req, res, next);
 };
