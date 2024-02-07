@@ -5,6 +5,7 @@ const helper = require('../utils/helper');
 
 const userSignUp = async (req, res) => {
   const { username, email, password } = req.body;
+  const limit = 5;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -23,7 +24,7 @@ const userSignUp = async (req, res) => {
 
       const userId = newUser._id;
       const shortURLs = await helper.getShortURLsForUser(userId);
-      res.render('Home', { shortURLs });
+      res.render('Home', { shortURLs, limit });
     });
   } catch (error) {
     res.render('Register', { error });
