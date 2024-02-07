@@ -6,9 +6,9 @@ const password = process.env.REDIS_PASSWORD;
 const redisClient = redis.createClient({
   password: password,
   socket: {
-      host: 'redis-10922.c11.us-east-1-3.ec2.cloud.redislabs.com',
-      port: 10922
-  }
+    host: 'redis-15811.c326.us-east-1-3.ec2.cloud.redislabs.com',
+    port: 15811,
+  },
 });
 // Handle Redis client connection errors
 redisClient.on("error", (error) => {
